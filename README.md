@@ -1,4 +1,4 @@
-% Code to analyze Cerebellar Purkinje cell interspike intervals.
+% Code to analyze Cerebellar Purkinje cell interspike intervals (ISIs).
 
 Measurement of the spontaneous firing rate (Hz) and the coefficient of variation (CV) of the inter
 spike intervals (ISIs) to characterize the temporal structure of
