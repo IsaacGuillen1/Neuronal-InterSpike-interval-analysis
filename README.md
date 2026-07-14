@@ -1,82 +1,12 @@
-%% Script to analyze Purkinje cell interspike-interval (p84-p98).
-% Interspike-Interval protocol (10 kHz SR)
-% Updated 7/13/2026 by Isaac Guillen
-clear;clc;
+% Code to analyze Cerebellar Purkinje cell interspike intervals.
 
-%% 1.Select experiment & cell 
-Experiment = num2str('Exp19.xlsx');      % Select experiment number
-Cell = num2str('Cell 1');               % Select cell number (or spreadsheet)
+Measurement of the spontaneous firing rate (Hz) and the coefficient of variation (CV) of the inter
+spike intervals (ISIs) to characterize the temporal structure of
+spike trains. The analysis was done over a 2-second duration of spontaneous firing recordings sampled at 10 kHz. Recordings were
+obtained across lobules of cerebellar vermis and paravermis
+slices.
 
-RecordedCells = sheetnames(Experiment); % Return recorded cells in the experiment
-  disp(['Experiment: ',Experiment]);
-  disp(RecordedCells);
-  disp(['Analyzing InterSpike-Interval: ', Cell]);
-
-% 2.Import data from excel to matlab
-CellData = readmatrix(Experiment,...
-    'Sheet',Cell,'Range','');     % Import data from selected excel & spreadsheet 
-
-%% Mouse Genotype & Age
-GenoType= CellData(1,1);          % Return mouse genotype:'WT' or 'KO'
-Age = CellData(1,2);              % Return mouse age (weeks)
-if GenoType == 1
-    disp('Genotype: WT mouse');
-    disp(['Mouse age: ',num2str(Age),' weeks']);
-    Mouse = ('WT');
-elseif GenoType == 2
-        disp('Genotype: KO mouse');
-        disp(['Mouse Age: ',num2str(Age),' weeks']);
-        Mouse = ('KO');
-end
-
-%% 3.Assign values to variables (GapFree)
-
-% Gap free 20 seconds trace @ 0pA 
-Time = CellData(3:end,1);            % x = time(ms)
-x = Time./1000;                      % Convert ms to seconds
-y= CellData(3:end,2);                % y1= voltage trace
-
-% % Gap free 1 second trace
-% Time1 = CellData(3:10003,1);       % x = time(ms)
-% x1 = Time1./1000;                  % Convert ms to seconds
-% y1= CellData(3:10003,2);           % y1= voltage trace
-
-% Gap free 1 second window interval
-[row, col]= find(x>=2 & x<=3);      % Select second/seconds to analyze                
-x1 = x(row);                         % Time in seconds
-y1= y(row);                          % y1= voltage trace
-
-Time1 = x1.*1000;                    % Convert seconds to ms
-
-%% 4.Find number of spikes (mV x ms)
-baseline= -20;  % Set up baseline in y-axis to quantify spikes
-
-size(y1,2);
-[pks1,time1] = arrayfun(@(col)findpeaks(y1(:,col),Time1,...
-    'MinPeakHeight',baseline),1:size(y1,2),'UniformOutput',false);
-X1 = pks1';
-T1 = time1';
-NumAPs1 = cell2mat(X1);     % Units: mV
-TimeAPs1= cell2mat (T1);    % Units: ms
-
-Total_APs1 = size(NumAPs1,1);
-
-%% 5.InterSpike Interval Analysis
-peakInterval =diff(TimeAPs1);
-
-% Average distance peaks (descriptive statistics)
-ISI_Mean_ms =mean(diff(TimeAPs1));
-ISI_SD =std(diff(TimeAPs1));
-STDerror= std((TimeAPs1)./sqrt(length(TimeAPs1)))';
-
-% Coefficient of Variation (is a measure of relative variability to its mean)
-CV = (ISI_SD/ISI_Mean_ms);                     % CV measures variability in spike trains       
-SpikeRate_Hz = inv(ISI_Mean_ms).*1000;     % Average Firing Rate = inv(mean)*1000 
-
-A_Results= table(ISI_Mean_ms, ISI_SD, CV, Total_APs1, SpikeRate_Hz)
-
-%% 6.Plots
-% Figure#1: 20 seconds voltage trace
+% Figure #1: Voltage trace showing the selected segment to analyze (in black)
 figure
 plot(x,y,'Color',[0.5 0.5 0.5]);
 hold on;
@@ -96,7 +26,7 @@ set(findall(gcf,'-property','FontSize'),'FontSize',12);
 
 <img width="1270" height="476" alt="Fig1" src="https://github.com/user-attachments/assets/7dc4bdad-8ea9-469a-8bc0-280f0ecb25d1" />
 
-%% Figure#2: 1 second voltage trace analysis
+%% Figure #2: 2-second voltage trace analysis
 figure;
 subplot(3,3,[1 2 4 5 7 8]);                        % Spikes
 plot(x1,y1,'color',[0.5 0.5 0.5],'linewidth',2);
@@ -156,4 +86,12 @@ set(findall(gcf,'-property','FontSize'),'FontSize',10);
    
 <img width="1698" height="690" alt="Fig2" src="https://github.com/user-attachments/assets/623a0d5f-d594-472b-9678-b8696dcc1eb4" />
 
-disp('FInished!');
+Table Results:
+
+1×5 table
+
+    ISI_Mean_ms    ISI_SD       CV       Total_APs1    SpikeRate_Hz
+    ___________    ______    ________    __________    ____________
+
+      23.707       1.6956    0.071524        42           42.181   
+
