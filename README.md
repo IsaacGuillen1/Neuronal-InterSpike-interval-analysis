@@ -6,7 +6,7 @@ spike trains. The analysis was done over a 1-second duration of spontaneous firi
 obtained from neurons across lobules of cerebellar vermis and paravermis
 slices.
 
-Figure #1: Cerebellar Purkinje cell spontaneous activity. Voltage trace showing the segment to be analyzed (in black)
+Figure #1: Cerebellar Purkinje cell spontaneous firikg. Voltage trace showing the segment to be analyzed (in black)
 
 <img width="1270" height="476" alt="Fig1" src="https://github.com/user-attachments/assets/7dc4bdad-8ea9-469a-8bc0-280f0ecb25d1" />
 
